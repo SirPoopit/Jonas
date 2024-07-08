@@ -33,7 +33,7 @@ ok so this is a story about feature creep let me walk through how i got here
 * ok i should make a repository containing not just my keystone but all assets
 * it was around here i realized that i needed to manually fix all the assets in order to print them properly 
 * im ranting about all the work im going to have to do to a friend and he says "probably insane project but the coolest thing ever would be a program that imports your ship build save and generates the appropriate model with all turrets n whatnot"
-* ping @shado lotys is this even posible "pretty sure it is."
+* ping @shadowlotus is this even posible "pretty sure it is."
 * today
 
 So about the * in the title...

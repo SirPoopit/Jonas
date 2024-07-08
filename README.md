@@ -3,30 +3,41 @@
 ## **what is a "Jonas"?**
 
 Jonas is a discord bot that I'm actively developing!
+
 Right now he is 1 file consisting of around 250 lines of python.
+
 He currently resides on a raspberry pi in the hands of a Acrid plushie.
+
 So, if you have any cool ideas like "i wish hazel could do that" ping me ill try to implement it.
 
 ## **how is a "Jonas"?**
 
 Right now Jonas has 2 main commands which, I am open to renaming because I want to rp with him and I dont know how *connacional* "!engrep" is.
+
 * !ENGREP - imputs a .ship file and returns a .stl file
 * !RESIZE - imputs a .png file and returns a .png than can be used for banners
+  
 Further down line I want to make a !LINER command that you can use to build your liner shape (same with clns).
 
 ## **where is a "Jonas"?**
 
 Hopefully right here!
+
 @avil how can I get my bot in this server?
+
 As of 1 line ago I have started the process of getting him in this very server!
 
 ## **who can a "Jonas"?**
 
 you can a Jonas!
 If you are @tartiflette @colepercy120 @gwyvern  @maximilianarchambault @zopto (and many more!) and you want people to be able to 3d print your ships send me your files.
+
 In order for a .stl to slice properly it needs to have absolutely no surfaces overlapping I would really appreciate it if you did this for me.
+
 But, if you dont that's ok! 
+
 After working through all the base game assets ive found a work flow and I can just grind it out.
+
 
 ## **why is a "Jonas"?**
 

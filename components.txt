@@ -1,0 +1,17 @@
+Stock/C30 Cannon
+Stock/C53 Cannon
+Stock/C54 Cannon
+Stock/C65 Cannon
+Stock/C90 Cannon
+Stock/Mk61 Cannon
+Stock/Mk62 Cannon
+Stock/Mk64 Cannon
+Stock/Mk65 Cannon
+Stock/Mk66 Cannon
+Stock/Mk68 Cannon
+Stock/Mk81 Railgun
+Stock/Mk82 Railgun
+Stock/Mk550 Mass Driver
+Stock/Mk600 Beam Cannon
+Stock/Mk610 Beam Turret
+Stock/T30 Cannon

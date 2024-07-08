@@ -1,0 +1,15 @@
+Stock/Axford Heavy Cruiser
+Stock/Bulk Feeder
+Stock/Keystone Destroyer
+Stock/Ocello Cruiser
+Stock/Raines Frigate
+Stock/Shuttle
+Stock/Solomon Battleship
+Stock/Sprinter Corvette
+Stock/Tugboat
+Stock/Vauxhall Light Cruiser
+Falcata Republic/CH_Moccotar
+Falcata Republic/CL_Irsavatha
+Falcata Republic/CL_Kaliare
+Falcata Republic/CV_Pskellon
+Falcata Republic/FF_Moxella

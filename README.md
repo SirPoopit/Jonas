@@ -23,13 +23,14 @@ Further down line I want to make a !LINER command that you can use to build your
 
 Hopefully right here!
 
-@avil how can I get my bot in this server?
+@avil how can I get my bot in this [server?](https://discord.com/invite/nebulousfc)
 
-As of 1 line ago I have started the process of getting him in this very server!
+As of 1 line ago I have started the process of getting him in this [very server!](https://discord.com/invite/nebulousfc)
 
 ## **who can a "Jonas"?**
 
 you can a Jonas!
+
 If you are @tartiflette @colepercy120 @gwyvern  @maximilianarchambault @zopto (and many more!) and you want people to be able to 3d print your ships send me your files.
 
 In order for a .stl to slice properly it needs to have absolutely no surfaces overlapping I would really appreciate it if you did this for me.

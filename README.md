@@ -29,7 +29,9 @@ As of 1 line ago I have started the process of getting him in [this very server!
 
 ## **who can a "Jonas"?**
 
-you can a Jonas!
+You can a Jonas!
+
+With [this link](https://discord.com/oauth2/authorize?client_id=1248318521302192158) you can invite Jonas to any server you are admin in.
 
 If you are @tartiflette @colepercy120 @gwyvern  @maximilianarchambault @zopto (and many more!) and you want people to be able to 3d print your ships send me your files.
 

@@ -23,9 +23,9 @@ Further down line I want to make a !LINER command that you can use to build your
 
 Hopefully right here!
 
-@avil how can I get my bot in this [server?](https://discord.com/invite/nebulousfc)
+@avil how can I get my bot in [this server?](https://discord.com/invite/nebulousfc)
 
-As of 1 line ago I have started the process of getting him in this [very server!](https://discord.com/invite/nebulousfc)
+As of 1 line ago I have started the process of getting him in [this very server!](https://discord.com/invite/nebulousfc)
 
 ## **who can a "Jonas"?**
 

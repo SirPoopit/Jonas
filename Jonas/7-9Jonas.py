@@ -1,4 +1,6 @@
 import discord
+from discord.ext import commands
+from discord import app_commands
 import requests
 import os
 from lxml import etree
@@ -22,10 +24,10 @@ USE_WHITELIST = True
 
 # Define intents
 intents = discord.Intents.default()
-intents.message_content = True
+#intents.message_content = True
 
-# Create a new Discord client instance
-client = discord.Client(intents=intents)
+# Create a new Discord bot instance
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Function to download the attached file
 async def download_attachment(url, filename):
@@ -38,7 +40,7 @@ def process_blend_file(hull_type, component_names, key_object_names, output_path
     # Path to the hull .blend file
     blend_path = os.path.join(BLEND_FILES_DIR, f"{hull_type}.blend")
 
-# Create a Blender script to be executed
+    # Create a Blender script to be executed
     script_content = f"""
 import bpy
 import os
@@ -166,134 +168,125 @@ def is_whitelisted(user_id, server_id):
     return str(user_id) in whitelist or str(server_id) in whitelist
     
 # Event to signify the bot is ready
-@client.event
+@bot.event
 async def on_ready():
-    print(f'{client.user} reporting for duty')
+    print(f'{bot.user} reporting for duty')
     
-# Event to handle messages
-@client.event
-async def on_message(message):
-    if message.author == client.user:
+# Slash command to return the leaderboard for the top 3 people that have said "balls"
+@bot.tree.command(name='balls', description='Returns the top 3 ballers')
+async def balls(interaction: discord.Interaction):
+    if not is_whitelisted(interaction.user.id, interaction.guild.id):
+        await interaction.response.send_message("womp womp", ephemeral=True)
+        log_command('not whitelisted', interaction.user)
         return
-        
-    # this whitelist bit is so prevent people from breaking jonas before hes done
-    if not is_whitelisted(message.author.id, message.guild.id):
-        await message.channel.send("womp womp")
-        log_command('not whitelisted', message.author)
+    
+    top_users = get_top_users()
+    if top_users:
+        top_users_message = "# Top 3 ballers \n"
+        for user, count in top_users:
+            top_users_message += f"{user}: {count} times\n"
+        await interaction.response.send_message(top_users_message)
+    else:
+        await interaction.response.send_message("No one has used the 'balls' command yet.")
+    log_command('balls', interaction.user)
+
+# Slash command to input a .ship file and return a .stl file
+@bot.tree.command(name='engrep', description='Inputs a .ship file and returns a .stl file')
+async def engrep(interaction: discord.Interaction, file: discord.Attachment):
+    if not is_whitelisted(interaction.user.id, interaction.guild.id):
+        await interaction.response.send_message("womp womp", ephemeral=True)
+        log_command('not whitelisted', interaction.user)
         return
-        
-    # The "!BALLS" command returns the leaderboard for the top 3 people that have said "balls"
-    if message.content.startswith('!BALLS'):
-        top_users = get_top_users()
-        if top_users:
-            top_users_message = "# Top 3 ballers \n"
-            for user, count in top_users:
-                top_users_message += f"{user}: {count} times\n"
-            await message.channel.send(top_users_message)
-        else:
-            await message.channel.send("No one has used the 'balls' command yet.")
-        log_command('!BALLS', message.author)
-        return
-
-    # If "balls" is said at any time in any context return "balls hehehe"
-    if 'balls' in message.content.lower():
-        await message.channel.send('balls hehehe')
-        log_command('balls', message.author)
-        
-    # The !ENGREP command imputs a .ship file and returns a .stl file 
-    if message.content.startswith('!ENGREP'):
-        if message.attachments:
-            # Download the attached file
-            attachment = message.attachments[0]
-            file_path = os.path.join(TEMP_DIR, attachment.filename)
-            await download_attachment(attachment.url, file_path)
-            
-        # Check if the file is a .SHIP
-        else:
-            await message.channel.send('... Sir you wanted me to analyze something?')
-            log_command('!ENGREP - no .ship file', message.author)
-            return
-        if file_path.endswith('.fleet'):
-            await message.channel.send('Sorry sir thats above my pay grade')
-            log_command('!ENGREP - .fleet file', message.author)
-            os.remove(input_path)
-            return 
-        elif file_path.endswith('.missile'):
-            await message.channel.send('Sorry sir thats not my area of expertise')
-            log_command('!ENGREP - .missile file', message.author)
-            os.remove(input_path)
-            return
-
-        # Read ship data from the file
-        keys, hull_type, component_names = read_ship_data(file_path)
-
-        # Check hull type
-        with open(HULLS_FILE_PATH, 'r') as f:
-            valid_hulls = [line.strip() for line in f]
-        if hull_type not in valid_hulls:
-            await message.channel.send('Sorry sir I havent worked with that hull before')
-            log_command('!ENGREP - invalid hull type', message.author)
-            return
-
-        # Check component names
-        with open(COMPONENTS_FILE_PATH, 'r') as f:
-            valid_components = [line.strip() for line in f]
-        component_names = [c for c in component_names if c in valid_components]
-
-        # Process the hull type
-        output_path = os.path.join(TEMP_DIR, f'{hull_type}.stl')
-        process_blend_file(hull_type, component_names, keys, output_path, file_path)
-
-        # Upload the resulting STL file
-        with open(output_path, 'rb') as f:
-            await message.channel.send(file=discord.File(f, f'{hull_type}.stl'))
-
-        # Clean up temporary files
+    
+    file_path = os.path.join(TEMP_DIR, file.filename)
+    await file.save(file_path)
+    
+    if file_path.endswith('.fleet'):
+        await interaction.response.send_message('Sorry sir thats above my pay grade')
+        log_command('engrep - .fleet file', interaction.user)
         os.remove(file_path)
-        os.remove(output_path)
-        
-        log_command('!ENGREP', message.author)
-        
-    # The !RESIZE command imputs a .png and returns that .png desized and degreaded 
-    if message.content.startswith('!RESIZE'):
-        if message.attachments:
-            # Download the attached file
-            attachment = message.attachments[0]
-            input_path = os.path.join(TEMP_DIR, attachment.filename)
-            output_path = os.path.join(TEMP_DIR, f"badge_compatible_{attachment.filename}")
-            await download_attachment(attachment.url, input_path)
-            
-        # Check if the file is a PNG
-        else:
-            await message.channel.send('... Sir you wanted me to resize something?')
-            log_command('!RESIZE - no PNG file', message.author)
-        if not input_path.lower().endswith('.png'):
-            await message.channel.send('Sorry sir I havent worked with that format before')
-            log_command('!RESIZE - not a PNG', message.author)
-            os.remove(input_path)
-            return
+        return 
+    elif file_path.endswith('.missile'):
+        await interaction.response.send_message('Sorry sir thats not my area of expertise')
+        log_command('engrep - .missile file', interaction.user)
+        os.remove(file_path)
+        return
+    
+    # Read ship data from the file
+    keys, hull_type, component_names = read_ship_data(file_path)
 
-            # Resize the image
-            resize_image(input_path, output_path)
+    # Check hull type
+    with open(HULLS_FILE_PATH, 'r') as f:
+        valid_hulls = [line.strip() for line in f]
+    if hull_type not in valid_hulls:
+        await interaction.response.send_message('Sorry sir I havent worked with that hull before')
+        log_command('engrep - invalid hull type', interaction.user)
+        return
 
-            # Upload the resized image
-            with open(output_path, 'rb') as f:
-                await message.channel.send(file=discord.File(f, f'badge_compatible_{attachment.filename}'))
+    # Check component names
+    with open(COMPONENTS_FILE_PATH, 'r') as f:
+        valid_components = [line.strip() for line in f]
+    component_names = [c for c in component_names if c in valid_components]
 
-            # Clean up temporary files
-            os.remove(input_path)
-            os.remove(output_path)
-            
-            log_command('!RESIZE', message.author)
-          
-    # The !LOG command sends me (sirpoopit) the command log
-    if message.content.startswith('!LOG'):
-        try:
-            user = await client.fetch_user(SPECIFIC_USER_ID)
-            with open(LOG_FILE_PATH, 'rb') as log_file:
-                await user.send(file=discord.File(log_file, 'command_log.txt'))
-            log_command('!LOG', message.author)
-        except Exception as e:
-            await message.channel.send(f"Failed to send log file: {str(e)}")
-            
-client.run(DISCORD_TOKEN)
+    # Process the hull type
+    output_path = os.path.join(TEMP_DIR, f'{hull_type}.stl')
+    process_blend_file(hull_type, component_names, keys, output_path, file_path)
+
+    # Upload the resulting STL file
+    await interaction.response.send_message(file=discord.File(output_path, f'{hull_type}.stl'))
+
+    # Clean up temporary files
+    os.remove(file_path)
+    os.remove(output_path)
+    
+    log_command('engrep', interaction.user)
+
+# Slash command to input a .png and return that .png resized and degraded
+@bot.tree.command(name='resize', description='Inputs a .png and returns it resized and degraded')
+async def resize(interaction: discord.Interaction, file: discord.Attachment):
+    if not is_whitelisted(interaction.user.id, interaction.guild.id):
+        await interaction.response.send_message("womp womp", ephemeral=True)
+        log_command('not whitelisted', interaction.user)
+        return
+    
+    input_path = os.path.join(TEMP_DIR, file.filename)
+    await file.save(input_path)
+    
+    if not input_path.lower().endswith('.png'):
+        await interaction.response.send_message('Sorry sir I havent worked with that format before')
+        log_command('resize - not a PNG', interaction.user)
+        os.remove(input_path)
+        return
+
+    output_path = os.path.join(TEMP_DIR, f"badge_compatible_{file.filename}")
+    
+    # Resize the image
+    resize_image(input_path, output_path)
+
+    # Upload the resized image
+    await interaction.response.send_message(file=discord.File(output_path, f'badge_compatible_{file.filename}'))
+
+    # Clean up temporary files
+    os.remove(input_path)
+    os.remove(output_path)
+    
+    log_command('resize', interaction.user)
+
+# Slash command to send me (sirpoopit) the command log
+@bot.tree.command(name='log', description='Sends the command log')
+async def log(interaction: discord.Interaction):
+    if interaction.user.id != int(SPECIFIC_USER_ID):
+        await interaction.response.send_message("You don't have permission to use this command.", ephemeral=True)
+        return
+    
+    try:
+        user = await bot.fetch_user(SPECIFIC_USER_ID)
+        with open(LOG_FILE_PATH, 'rb') as log_file:
+            await user.send(file=discord.File(log_file, 'command_log.txt'))
+        await interaction.response.send_message("Log file sent.", ephemeral=True)
+        log_command('log', interaction.user)
+    except Exception as e:
+        await interaction.response.send_message(f"Failed to send log file: {str(e)}")
+
+# Run the bot
+bot.run(DISCORD_TOKEN)

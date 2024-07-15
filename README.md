@@ -1,12 +1,5 @@
 # Jonas release*
 
-## Usage
-
-```sh
-poetry install
-poetry run python Jonas/main.py
-```
-
 ## **what is a "Jonas"?**
 
 Jonas is a discord bot that I'm actively developing!
